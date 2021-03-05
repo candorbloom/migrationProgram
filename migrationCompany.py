@@ -3,12 +3,17 @@ import os
 import psycopg2
 import time
 
-TARGET_DB = "smms_iot"
-TARGET_DB_HOST = "15.165.80.49"
-TARGET_DB_PORT = "5432"
-TARGET_DB_USER = "smms_main"
-TARGET_DB_PASSWORD = "!!##Cntech#@201217!smms"
+# TARGET_DB = "smms_iot"
+# TARGET_DB_HOST = "15.165.80.49"
+# TARGET_DB_PORT = "5432"
+# TARGET_DB_USER = "smms_main"
+# TARGET_DB_PASSWORD = "!!##Cntech#@201217!smms"
 
+TARGET_DB = "smms"
+TARGET_DB_HOST = "smms-v3-db.cy3ime2ikct9.ap-northeast-2.rds.amazonaws.com"
+TARGET_DB_PORT = "5432"
+TARGET_DB_USER = "smms"
+TARGET_DB_PASSWORD = "cntech00##"
 MIGRATION_DB = "smms"
 MIGRATION_DB_HOST = "smms-v3-db.cy3ime2ikct9.ap-northeast-2.rds.amazonaws.com"
 MIGRATION_DB_PORT = "5432"
@@ -43,7 +48,7 @@ def insertSql(query):
 
 ## targetDB에서 tb_company 데이터 가져오기 
 def selectTbCompany():
-    query = "select * from tb_company order by company_srl"
+    query = "select * from mg_company order by company_srl"
     result = selectSql(query)
     parsingTbCompany(result)
 
@@ -63,32 +68,32 @@ def parsingTbCompany(result):
         param['name'] = data[1]
         
         # 빈 데이터 처리
-        param['president'] = ''
+        param['president_name'] = ''
         if (data[2] == None) or (data[2] == ''):
-            param['president'] =''
+            param['president_name'] =''
         else :
-            param['president'] = data[2]
+            param['president_name'] = data[2]
         
         # 빈 데이터 처리
-        param['phone'] = ''
+        param['company_phone'] = ''
         if (data[5] == None) or (data[5] == ''):
-            param['phone'] = ''
+            param['company_phone'] = ''
         else :
-            param['phone'] = data[5]
+            param['company_phone'] = data[5]
 
         # 빈 데이터 처리
-        param['fax'] = ''
+        param['company_fax'] = ''
         if (data[7] == None) or (data[7] == ''):
-            param['fax'] = ''
+            param['company_fax'] = ''
         else :
-            param['fax'] = data[7]
+            param['company_fax'] = data[7]
         
         # 빈 데이터 처리
-        param['email'] = ''
+        param['company_email'] = ''
         if (data[6] == None) or (data[6] == ''):
-            param['email'] = ''
+            param['company_email'] = ''
         else :
-            param['email'] = data[6]
+            param['company_email'] = data[6]
         
         param['address_1'] = ''
         param['address_2'] = ''
@@ -113,36 +118,52 @@ def parsingTbCompany(result):
             param['client_idx'] = data[4]
 
         # 빈 데이터 처리
-        param['company_manager'] = ''
+        param['company_manager_name'] = ''
         if (data[15] == None) or (data[15] == ''):
-            param['company_manager'] = ''
+            param['company_manager_name'] = ''
         else :
-            param['company_manager'] = data[15]
+            param['company_manager_name'] = data[15]
         
+        # 빈 데이터 처리
+        param['company_manager_phone'] = ''
+        if (data[16] == None) or (data[16] == ''):
+            param['company_manager_phone'] = ''
+        else :
+            param['company_manager_phone'] = data[16]
+
         # 빈 데이터 처리
         param['zipcode'] = ''
         if (data[8] == None) or (data[8] == ''):
             param['zipcode'] = ''
         else :
             param['zipcode'] = data[8]
+
+        # 빈 데이터 처리
+        param['memo'] = ''
+        if (data[22] == None) or (data[22] == ''):
+            param['memo'] = ''
+        else :
+            param['memo'] = data[22]
         
         insertToCompany(param)
 
 
 def insertToCompany(param):
-    query = "INSERT INTO tb_company (idx, created_at, name, president, phone, fax, email, address_1, address_2, address_3, client_idx, company_manager, zipcode) values ({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}', '{}')"
+    query = "INSERT INTO new_company (idx, created_at, name, president_name, company_phone, company_fax, company_email, address_1, address_2, address_3, client_idx, company_manager_name, company_manager_phone, memo, zipcode) values ({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}', '{}', '{}', '{}')"
     query = query.format(param['idx'],
                         param['created_at'],
                         param['name'],
-                        param['president'],
-                        param['phone'],
-                        param['fax'],
-                        param['email'],
+                        param['president_name'],
+                        param['company_phone'],
+                        param['company_fax'],
+                        param['company_email'],
                         param['address_1'],
                         param['address_2'],
                         param['address_3'],
                         param['client_idx'],
-                        param['company_manager'],
+                        param['company_manager_name'],
+                        param['company_manager_phone'],
+                        param['memo'],
                         param['zipcode'])
     insertSql(query)
     print(query)

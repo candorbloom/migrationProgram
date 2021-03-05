@@ -60,7 +60,7 @@ def parsingTbDetector(result):
         insertToWarranty(param)
 
 def insertToWarranty(param):
-    query = "UPDATE tb_warranty SET device_euid='{}' where idx ='{}'"
+    query = "UPDATE new_warranty SET device_euid='{}' where idx ='{}'"
     query = query.format(param['device_euid'],
                         param['idx'])
     updateSql(query)
